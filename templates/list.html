@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Список напоминаний</title>
+  </head>
+  <body>
+    <h1>Ваши напоминания</h1>
+    <table border="1">
+      <tr>
+        <th>ID</th>
+        <th>Описание</th>
+        <th>Время</th>
+      </tr>
+      {% for reminder in reminders %}
+      <tr>
+        <td>{{ reminder[0] }}</td>
+        <td>{{ reminder[1] }}</td>
+        <td>{{ reminder[2] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <a href="/">Добавить новое напоминание</a>
+  </body>
+</html>

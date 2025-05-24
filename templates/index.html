@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Добавить напоминание</title>
+  </head>
+  <body>
+    <h1>Добавить напоминание</h1>
+    <form method="POST">
+      <label>Telegram ID:</label
+      ><input type="text" name="user_id" required /><br />
+      <label>Описание:</label
+      ><input type="text" name="description" required /><br />
+      <label>Дата (YYYY-MM-DD):</label
+      ><input type="text" name="date" required /><br />
+      <label>Время (HH:MM):</label
+      ><input type="text" name="time" required /><br />
+      <input type="submit" value="Добавить" />
+    </form>
+    <a href="/list/USER_ID">Посмотреть напоминания</a>
+  </body>
+</html>
