@@ -1,0 +1,4 @@
+[MASTER]
+     disable=C0114,C0115,C0116  # Отключаем требования к докстрингам для модулей/классов/функций
+     max-line-length=88
+     ignore=.venv,__pycache__
