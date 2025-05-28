@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 # Загрузка переменных
 load_dotenv()
-API_TOKEN = os.getenv('TELEGRAM_TOKEN')
+API_TOKEN = os.getenv("TELEGRAM_TOKEN")
 if not API_TOKEN:
     raise ValueError("TELEGRAM_TOKEN не найден в .env файле")
 bot = Bot(token=API_TOKEN)
@@ -34,7 +34,7 @@ scheduler = AsyncIOScheduler()
 
 def init_db():
     try:
-        conn = sqlite3.connect('reminders.db')
+        conn = sqlite3.connect("reminders.db")
         c = conn.cursor()
         c.execute(
             "CREATE TABLE IF NOT EXISTS reminders ("
@@ -51,6 +51,7 @@ def init_db():
     finally:
         conn.close()
 
+
 # Telegram: Обработчик команды /start
 
 
@@ -60,6 +61,7 @@ async def send_welcome(message: types.Message):
         f"Привет! Я бот-напоминалка. Твой ID: {message.from_user.id}\n"
         "Команды:\n/add Описание YYYY-MM-DD HH:MM\n/list\n/delete ID"
     )
+
 
 # Telegram: Добавление напоминания
 
@@ -71,13 +73,13 @@ async def add_reminder(message: types.Message):
         parts = message.text.strip().split(maxsplit=1)
         if len(parts) < 2:
             raise ValueError("Недостаточно аргументов")
-        args = parts[1].rsplit(' ', 2)
+        args = parts[1].rsplit(" ", 2)
         if len(args) != 3:
             raise ValueError(f"Неверное количество аргументов: {args}")
         description, date, time = args
         logger.info("Описание: %s, Дата: %s, Время: %s", description, date, time)
         reminder_time = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M")
-        conn = sqlite3.connect('reminders.db')
+        conn = sqlite3.connect("reminders.db")
         c = conn.cursor()
         c.execute(
             "INSERT INTO reminders (user_id, description, reminder_time, status) "
@@ -97,13 +99,14 @@ async def add_reminder(message: types.Message):
     finally:
         conn.close()
 
+
 # Telegram: Список напоминаний
 
 
 @dp.message(Command("list"))
 async def list_reminders(message: types.Message):
     try:
-        conn = sqlite3.connect('reminders.db')
+        conn = sqlite3.connect("reminders.db")
         c = conn.cursor()
         c.execute(
             "SELECT id, description, reminder_time FROM reminders "
@@ -124,6 +127,7 @@ async def list_reminders(message: types.Message):
     finally:
         conn.close()
 
+
 # Telegram: Удаление напоминания
 
 
@@ -131,7 +135,7 @@ async def list_reminders(message: types.Message):
 async def delete_reminder(message: types.Message):
     try:
         reminder_id = int(message.text.split()[1])
-        conn = sqlite3.connect('reminders.db')
+        conn = sqlite3.connect("reminders.db")
         c = conn.cursor()
         c.execute(
             "DELETE FROM reminders WHERE id = ? AND user_id = ?",
@@ -145,12 +149,13 @@ async def delete_reminder(message: types.Message):
     finally:
         conn.close()
 
+
 # Планировщик: Отправка напоминаний
 
 
 async def check_reminders():
     try:
-        conn = sqlite3.connect('reminders.db')
+        conn = sqlite3.connect("reminders.db")
         c = conn.cursor()
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M")
         c.execute(
@@ -161,27 +166,29 @@ async def check_reminders():
         reminders = c.fetchall()
         for reminder in reminders:
             await bot.send_message(reminder[1], f"Напоминание: {reminder[2]}")
-            c.execute("UPDATE reminders SET status = 'sent' WHERE id = ?",
-                      (reminder[0],))
+            c.execute(
+                "UPDATE reminders SET status = 'sent' WHERE id = ?", (reminder[0],)
+            )
         conn.commit()
     except sqlite3.Error as e:
         logger.error("Ошибка в планировщике: %s", e)
     finally:
         conn.close()
 
+
 # Flask: Главная страница с формой
 
 
-@flask_app.route('/', methods=['GET', 'POST'])
+@flask_app.route("/", methods=["GET", "POST"])
 def index():
     try:
-        if request.method == 'POST':
-            user_id = request.form['user_id']
-            description = request.form['description']
-            date = request.form['date']
-            time = request.form['time']
+        if request.method == "POST":
+            user_id = request.form["user_id"]
+            description = request.form["description"]
+            date = request.form["date"]
+            time = request.form["time"]
             reminder_time = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M")
-            conn = sqlite3.connect('reminders.db')
+            conn = sqlite3.connect("reminders.db")
             c = conn.cursor()
             c.execute(
                 "INSERT INTO reminders (user_id, description, reminder_time, status) "
@@ -190,26 +197,27 @@ def index():
                     user_id,
                     description,
                     reminder_time.strftime("%Y-%m-%d %H:%M"),
-                    "pending"
+                    "pending",
                 ),
             )
             conn.commit()
             return "Напоминание добавлено!"
-        return render_template('index.html')
+        return render_template("index.html")
     except (ValueError, sqlite3.Error) as e:
         logger.error("Ошибка в веб-форме: %s", e)
         return f"Ошибка: {e}"
     finally:
-        if 'conn' in locals():
+        if "conn" in locals():
             conn.close()
+
 
 # Flask: Список напоминаний
 
 
-@flask_app.route('/list/<user_id>')
+@flask_app.route("/list/<user_id>")
 def list_web(user_id):
     try:
-        conn = sqlite3.connect('reminders.db')
+        conn = sqlite3.connect("reminders.db")
         c = conn.cursor()
         c.execute(
             "SELECT id, description, reminder_time FROM reminders "
@@ -217,18 +225,19 @@ def list_web(user_id):
             (user_id,),
         )
         reminders = c.fetchall()
-        return render_template('list.html', reminders=reminders, user_id=user_id)
+        return render_template("list.html", reminders=reminders, user_id=user_id)
     except sqlite3.Error as e:
         logger.error("Ошибка при получении списка веб: %s", e)
         return f"Ошибка: {e}"
     finally:
         conn.close()
 
+
 # Запуск
 
 
 async def on_startup():
-    scheduler.add_job(check_reminders, 'interval', seconds=60)
+    scheduler.add_job(check_reminders, "interval", seconds=60)
     scheduler.start()
     logger.info("Планировщик запущен")
 
@@ -238,11 +247,12 @@ async def main():
     await on_startup()
     # Запускаем Flask в отдельном потоке
     flask_thread = threading.Thread(
-        target=lambda: flask_app.run(host='0.0.0.0', port=5000)
+        target=lambda: flask_app.run(host="0.0.0.0", port=5000)
     )
     flask_thread.start()
     # Запускаем Telegram-бот
     await dp.start_polling(bot)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())
