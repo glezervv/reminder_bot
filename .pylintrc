@@ -1,4 +1,5 @@
 [MASTER]
-     disable=C0114,C0115,C0116  # Отключаем требования к докстрингам для модулей/классов/функций
-     max-line-length=88
-     ignore=.venv,__pycache__
+disable=C0114,C0115,C0116
+max-line-length=88
+ignore=.venv,__pycache__
+extension-pkg-whitelist=aiogram,apscheduler,flask,dotenv

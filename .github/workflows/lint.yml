@@ -26,4 +26,4 @@ jobs:
       - name: Run flake8
         run: flake8 . --max-line-length=88 --exclude=.venv,__pycache__
       - name: Run pylint
-        run: pylint *.py --max-line-length=88
+        run: pylint *.py --max-line-length=88 --extension-pkg-whitelist=aiogram,apscheduler,flask,dotenv

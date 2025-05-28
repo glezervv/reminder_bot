@@ -3,8 +3,12 @@
   "python.linting.flake8Enabled": true,
   "python.linting.pylintEnabled": true,
   "python.linting.flake8Args": ["--max-line-length=88"],
-  "python.linting.pylintArgs": ["--max-line-length=88"],
+  "python.linting.pylintArgs": [
+    "--max-line-length=88",
+    "--extension-pkg-whitelist=aiogram,apscheduler,flask,dotenv"
+  ],
   "editor.formatOnSave": true,
   "python.formatting.provider": "black",
-  "python.formatting.blackArgs": ["--line-length", "88"]
+  "python.formatting.blackArgs": ["--line-length", "88"],
+  "python.pythonPath": ".\\.venv\\Scripts\\python.exe"
 }
