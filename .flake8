@@ -1,4 +1,4 @@
 [flake8]
      max-line-length = 88
-     exclude = .venv, __pycache__, *.pyc
-     ignore = E203, W503  # Игнорируем конфликты с black
+     exclude = .venv,__pycache__,*.pyc
+     ignore = E203,W503
